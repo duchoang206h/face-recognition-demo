@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="" id="myform">
+        <select onchange="handleSelect(this)">
+            <option value="encode">Encode</option>
+            <option value="recognize">Recognize</option>
+        </select>
+        <input type="text" name="name" placeholder="Name">
+        <input type="file" placeholder="Upload file" accept="image/*" name="file">
+        <button type="submit">Submit</button>
+        <p id="response">Response: </p>
+    </form>
+
+    <script>
+        let type = "encode"
+        function handleSelect (event) {
+            type = event.value;
+        } 
+        document.getElementById('myform').addEventListener('submit', handleSubmit)
+        async function handleSubmit(e) {
+            e.preventDefault();
+            var formData = new FormData(e.target);
+            if(type==='encode') {
+                 await fetch('/encode-face', { method: "POST", body: formData });
+                 alert("Success")
+            }else {
+                 let res = await fetch('/recognize-face', { method: "POST", body: formData });
+                 res = await res.json()
+                 document.getElementById("response").innerText= "Response: " +  res.recognized_name || res.error
+            }
+        }
+    </script>
+</body>
+</html>
